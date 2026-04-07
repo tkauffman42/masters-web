@@ -1,0 +1,38 @@
+:root {
+  --masters-green: #006747;
+  --masters-dark: #004d35;
+  --masters-yellow: #f2c75c;
+  --masters-light: #f0f7f4;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  background: #f8f9fa;
+  color: #333;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+h1, h2, h3 {
+  line-height: 1.2;
+}
+
+a {
+  color: var(--masters-green);
+}
+
+img {
+  max-width: 100%;
+}
