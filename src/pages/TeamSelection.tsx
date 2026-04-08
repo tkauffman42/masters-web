@@ -1,72 +1,102 @@
 import { useState } from "react";
-import { sampleGolfers } from "../data";
-import type { Golfer } from "../types";
+import { tiers } from "../data";
+import type { SelectionPlayer } from "../types";
 import "./TeamSelection.css";
 
-const MAX_PICKS = 4;
+const TOTAL_PICKS = tiers.reduce((sum, t) => sum + t.picks, 0);
 
 export default function TeamSelection() {
-  const [selected, setSelected] = useState<Golfer[]>([]);
+  // selections keyed by tier number
+  const [selected, setSelected] = useState<Record<number, SelectionPlayer[]>>({});
 
-  const toggleGolfer = (golfer: Golfer) => {
+  const tierSelections = (tier: number) => selected[tier] ?? [];
+
+  const togglePlayer = (tier: number, maxPicks: number, player: SelectionPlayer) => {
     setSelected((prev) => {
-      const isSelected = prev.some((g) => g.id === golfer.id);
-      if (isSelected) return prev.filter((g) => g.id !== golfer.id);
-      if (prev.length >= MAX_PICKS) return prev;
-      return [...prev, golfer];
+      const current = prev[tier] ?? [];
+      const isSelected = current.some((p) => p.id === player.id);
+      if (isSelected) {
+        return { ...prev, [tier]: current.filter((p) => p.id !== player.id) };
+      }
+      if (current.length >= maxPicks) return prev;
+      return { ...prev, [tier]: [...current, player] };
     });
   };
 
-  const isSelected = (golfer: Golfer) => selected.some((g) => g.id === golfer.id);
+  const isPlayerSelected = (tier: number, player: SelectionPlayer) =>
+    tierSelections(tier).some((p) => p.id === player.id);
+
+  const allPicks = tiers.flatMap((t) => tierSelections(t.tier));
+  const allTiersFull = tiers.every((t) => tierSelections(t.tier).length === t.picks);
 
   return (
     <div className="team-selection">
       <div className="page-header">
         <h1>Select Your Team</h1>
         <p>
-          Choose {MAX_PICKS} golfers for your Masters pool roster.{" "}
+          Choose {TOTAL_PICKS} golfers across {tiers.length} tiers for your Masters pool roster.{" "}
           <strong>
-            {selected.length}/{MAX_PICKS} selected
+            {allPicks.length}/{TOTAL_PICKS} selected
           </strong>
         </p>
       </div>
 
-      {selected.length > 0 && (
+      {allPicks.length > 0 && (
         <div className="selected-banner">
           <h3>Your Picks</h3>
           <div className="selected-chips">
-            {selected.map((g) => (
-              <button
-                key={g.id}
-                className="chip"
-                onClick={() => toggleGolfer(g)}
-              >
-                {g.name} ✕
-              </button>
-            ))}
+            {tiers.map((t) =>
+              tierSelections(t.tier).map((p) => (
+                <button
+                  key={p.id}
+                  className="chip"
+                  onClick={() => togglePlayer(t.tier, t.picks, p)}
+                >
+                  {p.name} ✕
+                </button>
+              ))
+            )}
           </div>
         </div>
       )}
 
-      <div className="golfer-grid">
-        {sampleGolfers.map((golfer) => (
-          <button
-            key={golfer.id}
-            className={`golfer-card ${isSelected(golfer) ? "selected" : ""} ${
-              !isSelected(golfer) && selected.length >= MAX_PICKS ? "disabled" : ""
-            }`}
-            onClick={() => toggleGolfer(golfer)}
-            disabled={!isSelected(golfer) && selected.length >= MAX_PICKS}
-          >
-            <div className="golfer-rank">#{golfer.worldRanking}</div>
-            <div className="golfer-name">{golfer.name}</div>
-            <div className="golfer-country">{golfer.country}</div>
-            {isSelected(golfer) && <div className="golfer-check">✓</div>}
-          </button>
-        ))}
-      </div>
+      {tiers.map((t) => {
+        const picks = tierSelections(t.tier);
+        const isFull = picks.length >= t.picks;
+        return (
+          <div key={t.tier} className="tier-section">
+            <div className="tier-header">
+              <h2>
+                {t.name}{" "}
+                <span className="tier-pick-info">
+                  (pick {t.picks}) — {picks.length}/{t.picks}
+                </span>
+              </h2>
+              {isFull && <span className="tier-complete">✓ Complete</span>}
+            </div>
+            <div className="golfer-grid">
+              {t.players.map((player) => {
+                const sel = isPlayerSelected(t.tier, player);
+                const disabled = !sel && isFull;
+                return (
+                  <button
+                    key={player.id}
+                    className={`golfer-card ${sel ? "selected" : ""} ${disabled ? "disabled" : ""}`}
+                    onClick={() => togglePlayer(t.tier, t.picks, player)}
+                    disabled={disabled}
+                  >
+                    <div className="golfer-name">{player.name}</div>
+                    <div className="golfer-country">{player.country}</div>
+                    {sel && <div className="golfer-check">✓</div>}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        );
+      })}
 
-      {selected.length === MAX_PICKS && (
+      {allTiersFull && (
         <div className="submit-section">
           <button className="btn btn-primary submit-btn">
             Lock In My Picks

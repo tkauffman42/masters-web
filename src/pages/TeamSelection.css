@@ -91,11 +91,39 @@
   cursor: not-allowed;
 }
 
-.golfer-rank {
-  font-size: 0.8rem;
-  color: #999;
+.tier-section {
+  margin-bottom: 1rem;
+}
+
+.tier-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.tier-header h2 {
+  font-family: "Playfair Display", serif;
+  color: var(--masters-green);
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.tier-pick-info {
+  font-family: sans-serif;
+  font-size: 0.85rem;
+  font-weight: 400;
+  color: #888;
+}
+
+.tier-complete {
+  background: var(--masters-green);
+  color: white;
+  font-size: 0.75rem;
   font-weight: 600;
-  margin-bottom: 0.25rem;
+  padding: 0.25rem 0.65rem;
+  border-radius: 12px;
+  white-space: nowrap;
 }
 
 .golfer-name {

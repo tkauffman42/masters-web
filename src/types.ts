@@ -15,3 +15,16 @@ export interface PoolEntry {
   golfers: Golfer[];
   totalPoints: number;
 }
+
+export interface SelectionPlayer {
+  id: number;
+  name: string;
+  country: string;
+}
+
+export interface TierConfig {
+  tier: number;
+  name: string;
+  picks: number;
+  players: SelectionPlayer[];
+}
