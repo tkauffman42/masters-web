@@ -17,29 +17,33 @@ function getRounds(picks: TeamPick[]): number[] {
   return Array.from(roundNumbers).sort((a, b) => a - b);
 }
 
-function getRoundSubtotal(picks: TeamPick[], round: number): { total: number; droppedIndex: number } {
-  const scores: { idx: number; val: number }[] = [];
-  for (let i = 0; i < picks.length; i++) {
-    const entry = picks[i].scores?.find((s) => s.round === round);
-    // Skip players who haven't started this round
-    if (entry && entry.roundScore !== "-" && entry.holesPlayed > 0) {
-      scores.push({ idx: i, val: parseScore(entry.roundScore) });
+function getPlayerTotal(pick: TeamPick): number {
+  let total = 0;
+  for (const s of pick.scores ?? []) {
+    if (s.roundScore !== "-" && s.holesPlayed > 0) {
+      total += parseScore(s.roundScore);
     }
   }
-  scores.sort((a, b) => a.val - b.val);
-  const counting = scores.slice(0, 4);
-  const dropped = scores.length > 4 ? scores[scores.length - 1].idx : -1;
+  return total;
+}
+
+function getTeamResult(picks: TeamPick[]): { total: number; droppedIndices: Set<number> } {
+  const playerTotals: { idx: number; val: number }[] = [];
+  for (let i = 0; i < picks.length; i++) {
+    const hasScores = picks[i].scores?.some(s => s.roundScore !== "-" && s.holesPlayed > 0);
+    if (hasScores) {
+      playerTotals.push({ idx: i, val: getPlayerTotal(picks[i]) });
+    }
+  }
+  playerTotals.sort((a, b) => a.val - b.val);
+  const dropped = new Set(playerTotals.slice(4).map(p => p.idx));
+  const counting = playerTotals.slice(0, 4);
   const total = counting.reduce((sum, s) => sum + s.val, 0);
-  return { total, droppedIndex: dropped };
+  return { total, droppedIndices: dropped };
 }
 
 function getTeamTotal(picks: TeamPick[]): number {
-  const rounds = getRounds(picks);
-  let total = 0;
-  for (const round of rounds) {
-    total += getRoundSubtotal(picks, round).total;
-  }
-  return total;
+  return getTeamResult(picks).total;
 }
 
 function formatScore(n: number): string {
@@ -89,7 +93,7 @@ export default function Leaderboard() {
       <div className="leaderboard-list">
         {sorted.map((team, index) => {
           const total = getTeamTotal(team.picks);
-          const teamRounds = getRounds(team.picks);
+          const { droppedIndices } = getTeamResult(team.picks);
 
           return (
             <div key={team.teamName} className={`lb-card ${index === 0 ? "leader" : ""}`}>
@@ -119,30 +123,25 @@ export default function Leaderboard() {
                   {team.picks.map((p, pickIdx) => {
                     const latest = p.scores?.[p.scores.length - 1];
                     const status = getPlayerStatus(p.scores);
-                    const droppedRounds = new Set<number>();
-                    for (const r of teamRounds) {
-                      const { droppedIndex } = getRoundSubtotal(team.picks, r);
-                      if (droppedIndex === pickIdx) droppedRounds.add(r);
-                    }
+                    const isDropped = droppedIndices.has(pickIdx);
 
                     return (
-                      <div key={p.playerId} className="lb-table-row">
+                      <div key={p.playerId} className={`lb-table-row ${isDropped ? "dropped" : ""}`}>
                         <span className="lb-col-player">{p.playerName}</span>
                         {allRounds.map((r) => {
                           const entry = p.scores?.find((s) => s.round === r);
-                          const isDropped = droppedRounds.has(r);
                           const scoreVal = entry ? entry.roundScore : "";
                           const display = scoreVal === "-" ? "-" : scoreVal || "-";
                           return (
                             <span
                               key={r}
-                              className={`lb-col-round ${isDropped ? "dropped" : ""}`}
+                              className="lb-col-round"
                             >
                               {display}
                             </span>
                           );
                         })}
-                        <span className={`lb-col-total ${latest ? (parseScore(latest.totalScore) < 0 ? "under-par" : parseScore(latest.totalScore) > 0 ? "over-par" : "") : ""}`}>
+                        <span className={`lb-col-total ${isDropped ? "" : latest ? (parseScore(latest.totalScore) < 0 ? "under-par" : parseScore(latest.totalScore) > 0 ? "over-par" : "") : ""}`}>
                           {latest?.totalScore ?? "-"}
                         </span>
                         <span className="lb-col-status">{status}</span>
@@ -154,7 +153,14 @@ export default function Leaderboard() {
                   <div className="lb-table-row lb-subtotal-row">
                     <span className="lb-col-player">Best 4</span>
                     {allRounds.map((r) => {
-                      const { total: rTotal } = getRoundSubtotal(team.picks, r);
+                      const rTotal = team.picks.reduce((sum, p, idx) => {
+                        if (droppedIndices.has(idx)) return sum;
+                        const entry = p.scores?.find((s) => s.round === r);
+                        if (entry && entry.roundScore !== "-" && entry.holesPlayed > 0) {
+                          return sum + parseScore(entry.roundScore);
+                        }
+                        return sum;
+                      }, 0);
                       return (
                         <span key={r} className="lb-col-round subtotal">
                           {formatScore(rTotal)}
