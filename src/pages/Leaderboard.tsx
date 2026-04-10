@@ -8,15 +8,29 @@ function parseScore(display: string): number {
 }
 
 function getTeamTotal(picks: TeamPick[]): number {
-  const scores = picks
-    .map((p) => {
-      const latest = p.scores?.[p.scores.length - 1];
-      return latest ? parseScore(latest.totalScore) : null;
-    })
-    .filter((s): s is number => s !== null)
-    .sort((a, b) => a - b);
-  // Best 4 scores count
-  return scores.slice(0, 4).reduce((sum, s) => sum + s, 0);
+  // Collect all rounds present across picks
+  const roundNumbers = new Set<number>();
+  for (const p of picks) {
+    for (const s of p.scores ?? []) {
+      roundNumbers.add(s.round);
+    }
+  }
+
+  let total = 0;
+  for (const round of roundNumbers) {
+    const roundScores: number[] = [];
+    for (const p of picks) {
+      const entry = p.scores?.find((s) => s.round === round);
+      if (entry) {
+        roundScores.push(parseScore(entry.roundScore));
+      }
+    }
+    // Best 4 scores count per round
+    roundScores.sort((a, b) => a - b);
+    total += roundScores.slice(0, 4).reduce((sum, s) => sum + s, 0);
+  }
+
+  return total;
 }
 
 function formatTotal(n: number): string {
