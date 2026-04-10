@@ -96,6 +96,9 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  flex-shrink: 0;
+  min-width: 48px;
+  padding-left: 0.5rem;
 }
 
 .points-value {
@@ -128,5 +131,15 @@
 
   .lb-golfers {
     font-size: 0.8rem;
+  }
+
+  .lb-info {
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .pick-player {
+    min-width: 100px;
+    flex: 1;
   }
 }
