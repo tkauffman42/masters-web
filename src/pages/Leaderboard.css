@@ -37,90 +37,145 @@
   color: var(--masters-green);
   min-width: 40px;
   text-align: center;
+  padding-top: 0.15rem;
 }
 
 .lb-info {
   flex: 1;
+  min-width: 0;
+}
+
+.lb-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.6rem;
 }
 
 .lb-name {
   font-weight: 600;
   font-size: 1.1rem;
   color: #222;
-  margin-bottom: 0.2rem;
 }
 
-.lb-golfers {
-  font-size: 0.85rem;
-  color: #888;
-}
-
-.lb-picks {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  margin-top: 0.4rem;
-}
-
-.lb-pick-row {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  font-size: 0.85rem;
-  color: #555;
-}
-
-.pick-player {
-  min-width: 140px;
-  font-weight: 500;
-}
-
-.pick-score {
-  font-weight: 700;
-  min-width: 32px;
-  text-align: right;
-  color: var(--masters-green);
-}
-
-.pick-round {
-  color: #999;
-  font-size: 0.75rem;
-}
-
-.pick-thru {
-  color: #999;
-  font-size: 0.75rem;
-}
-
-.lb-points {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  flex-shrink: 0;
-  min-width: 48px;
-  padding-left: 0.5rem;
-}
-
-.points-value {
-  font-size: 1.5rem;
+.lb-total {
+  font-size: 1.4rem;
   font-weight: 700;
   color: var(--masters-green);
   font-variant-numeric: tabular-nums;
 }
 
-.points-value.under-par {
+.lb-total.under-par {
   color: var(--masters-green);
 }
 
-.points-value.over-par {
+.lb-total.over-par {
   color: #c0392b;
 }
 
-.points-label {
-  font-size: 0.7rem;
+/* Round table */
+.lb-round-table {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  font-size: 0.82rem;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.lb-table-header {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background: #f7f7f7;
+  padding: 0.4rem 0.6rem;
+  font-weight: 600;
+  color: #888;
   text-transform: uppercase;
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid #eee;
+}
+
+.lb-table-row {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  padding: 0.35rem 0.6rem;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.lb-table-row:last-child {
+  border-bottom: none;
+}
+
+.lb-subtotal-row {
+  background: #f9f9f5;
+  font-weight: 600;
+  border-top: 1px solid #ddd;
+}
+
+.lb-col-player {
+  flex: 1;
+  min-width: 120px;
+  font-weight: 500;
+  color: #333;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lb-table-header .lb-col-player {
+  color: #888;
+}
+
+.lb-col-round {
+  width: 48px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  color: #444;
+}
+
+.lb-col-round.dropped {
+  opacity: 0.35;
+  text-decoration: line-through;
+}
+
+.lb-col-round.subtotal {
+  font-weight: 700;
+  color: var(--masters-green);
+}
+
+.lb-col-total {
+  width: 48px;
+  text-align: center;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--masters-green);
+}
+
+.lb-col-total.under-par {
+  color: var(--masters-green);
+}
+
+.lb-col-total.over-par {
+  color: #c0392b;
+}
+
+.lb-col-total.subtotal {
+  font-weight: 800;
+}
+
+.lb-col-status {
+  width: 60px;
+  text-align: right;
+  font-size: 0.72rem;
   color: #999;
-  letter-spacing: 0.05em;
+}
+
+.lb-error {
+  color: #c0392b;
 }
 
 @media (max-width: 640px) {
@@ -129,17 +184,28 @@
     gap: 0.75rem;
   }
 
-  .lb-golfers {
-    font-size: 0.8rem;
+  .lb-col-player {
+    min-width: 80px;
+    font-size: 0.78rem;
   }
 
-  .lb-info {
-    min-width: 0;
-    overflow: hidden;
+  .lb-col-round {
+    width: 36px;
+    font-size: 0.75rem;
   }
 
-  .pick-player {
-    min-width: 100px;
-    flex: 1;
+  .lb-col-total {
+    width: 36px;
+    font-size: 0.75rem;
+  }
+
+  .lb-col-status {
+    width: 48px;
+    font-size: 0.68rem;
+  }
+
+  .lb-rank {
+    min-width: 30px;
+    font-size: 1.2rem;
   }
 }
