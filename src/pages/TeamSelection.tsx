@@ -1,11 +1,15 @@
 import { useState } from "react";
 import { tiers } from "../data";
-import type { SelectionPlayer } from "../types";
+import type { SelectionPlayer, TeamSubmission } from "../types";
 import "./TeamSelection.css";
 
 const TOTAL_PICKS = tiers.reduce((sum, t) => sum + t.picks, 0);
 
 export default function TeamSelection() {
+  const [teamName, setTeamName] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [submitted, setSubmitted] = useState(false);
   // selections keyed by tier number
   const [selected, setSelected] = useState<Record<number, SelectionPlayer[]>>({});
 
@@ -28,6 +32,40 @@ export default function TeamSelection() {
 
   const allPicks = tiers.flatMap((t) => tierSelections(t.tier));
   const allTiersFull = tiers.every((t) => tierSelections(t.tier).length === t.picks);
+  const canSubmit = allTiersFull && teamName.trim().length > 0;
+
+  const buildSubmission = (): TeamSubmission => ({
+    teamName: teamName.trim(),
+    picks: tiers.flatMap((t) =>
+      tierSelections(t.tier).map((p) => ({
+        tier: t.tier,
+        playerId: p.id,
+        playerName: p.name,
+      }))
+    ),
+  });
+
+  const handleSubmit = async () => {
+    if (!canSubmit || submitting) return;
+    setSubmitting(true);
+    setSubmitError(null);
+    try {
+      const response = await fetch("https://masters-api.vercel.app/api/teams", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(buildSubmission()),
+      });
+      if (!response.ok) {
+        const text = await response.text();
+        throw new Error(text || `Request failed (${response.status})`);
+      }
+      setSubmitted(true);
+    } catch (err) {
+      setSubmitError(err instanceof Error ? err.message : "Something went wrong");
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   return (
     <div className="team-selection">
@@ -39,6 +77,19 @@ export default function TeamSelection() {
             {allPicks.length}/{TOTAL_PICKS} selected
           </strong>
         </p>
+      </div>
+
+      <div className="team-name-section">
+        <label htmlFor="team-name">Team Name</label>
+        <input
+          id="team-name"
+          type="text"
+          className="team-name-input"
+          placeholder="Enter your team name"
+          value={teamName}
+          onChange={(e) => setTeamName(e.target.value)}
+          maxLength={50}
+        />
       </div>
 
       {allPicks.length > 0 && (
@@ -96,11 +147,23 @@ export default function TeamSelection() {
         );
       })}
 
-      {allTiersFull && (
+      {submitted && (
+        <div className="submit-success">Your team has been locked in!</div>
+      )}
+
+      {allTiersFull && !submitted && (
         <div className="submit-section">
-          <button className="btn btn-primary submit-btn">
-            Lock In My Picks
+          <button
+            className="btn btn-primary submit-btn"
+            disabled={!canSubmit || submitting}
+            onClick={handleSubmit}
+          >
+            {submitting ? "Submitting…" : "Lock In My Picks"}
           </button>
+          {submitError && <p className="submit-error">{submitError}</p>}
+          {!teamName.trim() && (
+            <p className="submit-hint">Enter a team name above to submit.</p>
+          )}
         </div>
       )}
     </div>

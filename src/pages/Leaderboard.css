@@ -12,7 +12,7 @@
 
 .lb-card {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 1.25rem;
   background: white;
   border: 1px solid #e8e8e8;
@@ -55,6 +55,43 @@
   color: #888;
 }
 
+.lb-picks {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-top: 0.4rem;
+}
+
+.lb-pick-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.85rem;
+  color: #555;
+}
+
+.pick-player {
+  min-width: 140px;
+  font-weight: 500;
+}
+
+.pick-score {
+  font-weight: 700;
+  min-width: 32px;
+  text-align: right;
+  color: var(--masters-green);
+}
+
+.pick-round {
+  color: #999;
+  font-size: 0.75rem;
+}
+
+.pick-thru {
+  color: #999;
+  font-size: 0.75rem;
+}
+
 .lb-points {
   display: flex;
   flex-direction: column;
@@ -66,6 +103,14 @@
   font-weight: 700;
   color: var(--masters-green);
   font-variant-numeric: tabular-nums;
+}
+
+.points-value.under-par {
+  color: var(--masters-green);
+}
+
+.points-value.over-par {
+  color: #c0392b;
 }
 
 .points-label {

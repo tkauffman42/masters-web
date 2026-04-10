@@ -1,22 +1,22 @@
 import type { Golfer, PoolEntry, TierConfig } from "./types";
 
 export const sampleGolfers: Golfer[] = [
-  { id: 1, name: "Scottie Scheffler", country: "USA", worldRanking: 1, score: -12, today: -4, thru: "F", position: "1" },
-  { id: 2, name: "Rory McIlroy", country: "NIR", worldRanking: 3, score: -10, today: -3, thru: "F", position: "2" },
-  { id: 3, name: "Jon Rahm", country: "ESP", worldRanking: 5, score: -8, today: -2, thru: "16", position: "3" },
-  { id: 4, name: "Brooks Koepka", country: "USA", worldRanking: 8, score: -7, today: -1, thru: "F", position: "T4" },
-  { id: 5, name: "Collin Morikawa", country: "USA", worldRanking: 4, score: -7, today: -3, thru: "F", position: "T4" },
-  { id: 6, name: "Ludvig Åberg", country: "SWE", worldRanking: 6, score: -6, today: -2, thru: "15", position: "6" },
-  { id: 7, name: "Xander Schauffele", country: "USA", worldRanking: 2, score: -5, today: 0, thru: "F", position: "7" },
-  { id: 8, name: "Viktor Hovland", country: "NOR", worldRanking: 12, score: -4, today: -1, thru: "F", position: "8" },
-  { id: 9, name: "Patrick Cantlay", country: "USA", worldRanking: 9, score: -3, today: 1, thru: "F", position: "T9" },
-  { id: 10, name: "Bryson DeChambeau", country: "USA", worldRanking: 10, score: -3, today: -2, thru: "14", position: "T9" },
-  { id: 11, name: "Tommy Fleetwood", country: "ENG", worldRanking: 11, score: -2, today: 0, thru: "F", position: "11" },
-  { id: 12, name: "Hideki Matsuyama", country: "JPN", worldRanking: 7, score: -1, today: 1, thru: "F", position: "12" },
-  { id: 13, name: "Tony Finau", country: "USA", worldRanking: 15, score: 0, today: 2, thru: "F", position: "13" },
-  { id: 14, name: "Shane Lowry", country: "IRL", worldRanking: 14, score: 1, today: 0, thru: "F", position: "14" },
-  { id: 15, name: "Dustin Johnson", country: "USA", worldRanking: 20, score: 2, today: 1, thru: "F", position: "15" },
-  { id: 16, name: "Cameron Smith", country: "AUS", worldRanking: 18, score: 3, today: 2, thru: "F", position: "16" },
+  { id: 1, name: "Scottie Scheffler", country: "USA", worldRanking: 1, score: -12, scoreDisplay: "-12", today: -4, todayDisplay: "-4", thru: "F", position: "1", rounds: [] },
+  { id: 2, name: "Rory McIlroy", country: "NIR", worldRanking: 3, score: -10, scoreDisplay: "-10", today: -3, todayDisplay: "-3", thru: "F", position: "2", rounds: [] },
+  { id: 3, name: "Jon Rahm", country: "ESP", worldRanking: 5, score: -8, scoreDisplay: "-8", today: -2, todayDisplay: "-2", thru: "16", position: "3", rounds: [] },
+  { id: 4, name: "Brooks Koepka", country: "USA", worldRanking: 8, score: -7, scoreDisplay: "-7", today: -1, todayDisplay: "-1", thru: "F", position: "T4", rounds: [] },
+  { id: 5, name: "Collin Morikawa", country: "USA", worldRanking: 4, score: -7, scoreDisplay: "-7", today: -3, todayDisplay: "-3", thru: "F", position: "T4", rounds: [] },
+  { id: 6, name: "Ludvig Åberg", country: "SWE", worldRanking: 6, score: -6, scoreDisplay: "-6", today: -2, todayDisplay: "-2", thru: "15", position: "6", rounds: [] },
+  { id: 7, name: "Xander Schauffele", country: "USA", worldRanking: 2, score: -5, scoreDisplay: "-5", today: 0, todayDisplay: "E", thru: "F", position: "7", rounds: [] },
+  { id: 8, name: "Viktor Hovland", country: "NOR", worldRanking: 12, score: -4, scoreDisplay: "-4", today: -1, todayDisplay: "-1", thru: "F", position: "8", rounds: [] },
+  { id: 9, name: "Patrick Cantlay", country: "USA", worldRanking: 9, score: -3, scoreDisplay: "-3", today: 1, todayDisplay: "+1", thru: "F", position: "T9", rounds: [] },
+  { id: 10, name: "Bryson DeChambeau", country: "USA", worldRanking: 10, score: -3, scoreDisplay: "-3", today: -2, todayDisplay: "-2", thru: "14", position: "T9", rounds: [] },
+  { id: 11, name: "Tommy Fleetwood", country: "ENG", worldRanking: 11, score: -2, scoreDisplay: "-2", today: 0, todayDisplay: "E", thru: "F", position: "11", rounds: [] },
+  { id: 12, name: "Hideki Matsuyama", country: "JPN", worldRanking: 7, score: -1, scoreDisplay: "-1", today: 1, todayDisplay: "+1", thru: "F", position: "12", rounds: [] },
+  { id: 13, name: "Tony Finau", country: "USA", worldRanking: 15, score: 0, scoreDisplay: "E", today: 2, todayDisplay: "+2", thru: "F", position: "13", rounds: [] },
+  { id: 14, name: "Shane Lowry", country: "IRL", worldRanking: 14, score: 1, scoreDisplay: "+1", today: 0, todayDisplay: "E", thru: "F", position: "14", rounds: [] },
+  { id: 15, name: "Dustin Johnson", country: "USA", worldRanking: 20, score: 2, scoreDisplay: "+2", today: 1, todayDisplay: "+1", thru: "F", position: "15", rounds: [] },
+  { id: 16, name: "Cameron Smith", country: "AUS", worldRanking: 18, score: 3, scoreDisplay: "+3", today: 2, todayDisplay: "+2", thru: "F", position: "16", rounds: [] },
 ];
 
 export const samplePoolEntries: PoolEntry[] = [

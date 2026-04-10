@@ -1,3 +1,4 @@
+import { useLeaderboard } from "../hooks/useLeaderboard";
 import { sampleGolfers } from "../data";
 import "./LiveScores.css";
 
@@ -7,15 +8,24 @@ function formatScore(score: number): string {
 }
 
 export default function LiveScores() {
-  const sorted = [...sampleGolfers].sort((a, b) => a.score - b.score);
+  const { golfers: liveGolfers, currentRound, roundStatus, loading, error, lastUpdated } = useLeaderboard();
+
+  // Fall back to sample data if live fetch fails
+  const golfers = liveGolfers.length > 0 ? liveGolfers : [...sampleGolfers].sort((a, b) => a.score - b.score);
+  const isLive = liveGolfers.length > 0;
 
   return (
     <div className="live-scores">
       <div className="page-header">
         <h1>Live Scores</h1>
         <p className="live-indicator">
-          <span className="live-dot"></span> Tournament in progress
+          <span className="live-dot"></span>
+          {loading ? "Loading live data…" : isLive ? `${roundStatus || `Round ${currentRound}`} – updates every 30s` : "Using sample data"}
         </p>
+        {error && <p className="error-text">⚠ {error}</p>}
+        {lastUpdated && (
+          <p className="last-updated">Last updated: {lastUpdated.toLocaleTimeString()}</p>
+        )}
       </div>
 
       <div className="scores-table-wrapper">
@@ -30,22 +40,25 @@ export default function LiveScores() {
             </tr>
           </thead>
           <tbody>
-            {sorted.map((golfer) => (
-              <tr key={golfer.id}>
-                <td className="pos">{golfer.position}</td>
-                <td className="player">
-                  <span className="player-name">{golfer.name}</span>
-                  <span className="player-country">{golfer.country}</span>
-                </td>
-                <td className={`score ${golfer.score < 0 ? "under" : golfer.score > 0 ? "over" : ""}`}>
-                  {formatScore(golfer.score)}
-                </td>
-                <td className={`today ${golfer.today < 0 ? "under" : golfer.today > 0 ? "over" : ""}`}>
-                  {formatScore(golfer.today)}
-                </td>
-                <td className="thru">{golfer.thru}</td>
-              </tr>
-            ))}
+            {golfers.map((golfer) => {
+              const notStarted = golfer.position === "-";
+              return (
+                <tr key={golfer.id}>
+                  <td className="pos">{golfer.position}</td>
+                  <td className="player">
+                    <span className="player-name">{golfer.name}</span>
+                    <span className="player-country">{golfer.country}</span>
+                  </td>
+                  <td className={`score ${!notStarted && golfer.score < 0 ? "under" : !notStarted && golfer.score > 0 ? "over" : ""}`}>
+                    {notStarted ? "-" : golfer.scoreDisplay ?? formatScore(golfer.score)}
+                  </td>
+                  <td className={`today ${!notStarted && golfer.today < 0 ? "under" : !notStarted && golfer.today > 0 ? "over" : ""}`}>
+                    {notStarted ? "-" : golfer.todayDisplay ?? formatScore(golfer.today)}
+                  </td>
+                  <td className="thru">{golfer.thru}</td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
