@@ -21,7 +21,8 @@ function getRoundSubtotal(picks: TeamPick[], round: number): { total: number; dr
   const scores: { idx: number; val: number }[] = [];
   for (let i = 0; i < picks.length; i++) {
     const entry = picks[i].scores?.find((s) => s.round === round);
-    if (entry) {
+    // Skip players who haven't started this round
+    if (entry && entry.roundScore !== "-" && entry.holesPlayed > 0) {
       scores.push({ idx: i, val: parseScore(entry.roundScore) });
     }
   }
