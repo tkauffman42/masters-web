@@ -1,15 +1,11 @@
 import { useState } from "react";
 import { tiers } from "../data";
-import type { SelectionPlayer, TeamSubmission } from "../types";
+import type { SelectionPlayer } from "../types";
 import "./TeamSelection.css";
 
 const TOTAL_PICKS = tiers.reduce((sum, t) => sum + t.picks, 0);
 
 export default function TeamSelection() {
-  const [teamName, setTeamName] = useState("");
-  const [submitting, setSubmitting] = useState(false);
-  const [submitError, setSubmitError] = useState<string | null>(null);
-  const [submitted, setSubmitted] = useState(false);
   // selections keyed by tier number
   const [selected, setSelected] = useState<Record<number, SelectionPlayer[]>>({});
 
@@ -31,65 +27,16 @@ export default function TeamSelection() {
     tierSelections(tier).some((p) => p.id === player.id);
 
   const allPicks = tiers.flatMap((t) => tierSelections(t.tier));
-  const allTiersFull = tiers.every((t) => tierSelections(t.tier).length === t.picks);
-  const canSubmit = allTiersFull && teamName.trim().length > 0;
-
-  const buildSubmission = (): TeamSubmission => ({
-    teamName: teamName.trim(),
-    picks: tiers.flatMap((t) =>
-      tierSelections(t.tier).map((p) => ({
-        tier: t.tier,
-        playerId: p.id,
-        playerName: p.name,
-      }))
-    ),
-  });
-
-  const handleSubmit = async () => {
-    if (!canSubmit || submitting) return;
-    setSubmitting(true);
-    setSubmitError(null);
-    try {
-      const response = await fetch("https://masters-api.vercel.app/api/teams", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(buildSubmission()),
-      });
-      if (!response.ok) {
-        const text = await response.text();
-        throw new Error(text || `Request failed (${response.status})`);
-      }
-      setSubmitted(true);
-    } catch (err) {
-      setSubmitError(err instanceof Error ? err.message : "Something went wrong");
-    } finally {
-      setSubmitting(false);
-    }
-  };
 
   return (
     <div className="team-selection">
       <div className="page-header">
         <h1>Select Your Team</h1>
         <p>
-          Choose {TOTAL_PICKS} golfers across {tiers.length} tiers for your Masters pool roster.{" "}
-          <strong>
-            {allPicks.length}/{TOTAL_PICKS} selected
-          </strong>
+          Browse {TOTAL_PICKS} golfers across {tiers.length} tiers.{" "}
+          <strong>Submissions are closed.</strong>{" "}
+          <span>{allPicks.length}/{TOTAL_PICKS} selected</span>
         </p>
-      </div>
-
-      <div className="team-name-section">
-        <label htmlFor="team-name">Team Name</label>
-        <input
-          id="team-name"
-          type="text"
-          className="team-name-input"
-          placeholder="Enter your team name"
-          value={teamName}
-          onChange={(e) => setTeamName(e.target.value)}
-          maxLength={50}
-        />
       </div>
 
       {allPicks.length > 0 && (
@@ -147,9 +94,6 @@ export default function TeamSelection() {
         );
       })}
 
-      {submitted && (
-        <div className="submit-success">Your team has been locked in!</div>
-      )}
     </div>
   );
 }
