@@ -10,9 +10,9 @@ export default function Home() {
           Pick your golfers. Track live scores. Compete for glory at Augusta.
         </p>
         <div className="hero-actions">
-          <Link to="/team" className="btn btn-primary">
+          {/* <Link to="/team" className="btn btn-primary">
             Select Your Team
-          </Link>
+          </Link> */}
           <Link to="/leaderboard" className="btn btn-secondary">
             View Leaderboard
           </Link>
@@ -20,11 +20,11 @@ export default function Home() {
       </section>
 
       <section className="features">
-        <div className="feature-card">
+        {/* <div className="feature-card">
           <div className="feature-icon">🏌️</div>
           <h3>Pick Your Team</h3>
           <p>Select your golfers from the Masters field and build your dream roster.</p>
-        </div>
+        </div> */}
         <div className="feature-card">
           <div className="feature-icon">📊</div>
           <h3>Live Scores</h3>

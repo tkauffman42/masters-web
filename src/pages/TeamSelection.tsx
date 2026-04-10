@@ -150,22 +150,6 @@ export default function TeamSelection() {
       {submitted && (
         <div className="submit-success">Your team has been locked in!</div>
       )}
-
-      {allTiersFull && !submitted && (
-        <div className="submit-section">
-          <button
-            className="btn btn-primary submit-btn"
-            disabled={!canSubmit || submitting}
-            onClick={handleSubmit}
-          >
-            {submitting ? "Submitting…" : "Lock In My Picks"}
-          </button>
-          {submitError && <p className="submit-error">{submitError}</p>}
-          {!teamName.trim() && (
-            <p className="submit-hint">Enter a team name above to submit.</p>
-          )}
-        </div>
-      )}
     </div>
   );
 }

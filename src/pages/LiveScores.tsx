@@ -1,5 +1,4 @@
 import { useLeaderboard } from "../hooks/useLeaderboard";
-import { sampleGolfers } from "../data";
 import "./LiveScores.css";
 
 function formatScore(score: number): string {
@@ -8,11 +7,7 @@ function formatScore(score: number): string {
 }
 
 export default function LiveScores() {
-  const { golfers: liveGolfers, currentRound, roundStatus, loading, error, lastUpdated } = useLeaderboard();
-
-  // Fall back to sample data if live fetch fails
-  const golfers = liveGolfers.length > 0 ? liveGolfers : [...sampleGolfers].sort((a, b) => a.score - b.score);
-  const isLive = liveGolfers.length > 0;
+  const { golfers, currentRound, roundStatus, loading, error, lastUpdated } = useLeaderboard();
 
   return (
     <div className="live-scores">
@@ -20,7 +15,7 @@ export default function LiveScores() {
         <h1>Live Scores</h1>
         <p className="live-indicator">
           <span className="live-dot"></span>
-          {loading ? "Loading live data…" : isLive ? `${roundStatus || `Round ${currentRound}`} – updates every 30s` : "Using sample data"}
+          {loading ? "Loading live data…" : `${roundStatus || `Round ${currentRound}`} – updates every 30s`}
         </p>
         {error && <p className="error-text">⚠ {error}</p>}
         {lastUpdated && (

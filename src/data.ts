@@ -177,6 +177,8 @@ export const tiers: TierConfig[] = [
       { id: 549, name: "Mike Weir", country: "CAN" },
       { id: 550, name: "Danny Willett", country: "ENG" },
       { id: 551, name: "Gary Woodland", country: "USA" },
+      { id: 998, name: "Will Zalatoris", country: "USA"},
+      { id: 999, name: "Tony Finau", country: "USA"}
     ],
   },
 ];
